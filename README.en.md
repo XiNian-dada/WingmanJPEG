@@ -86,17 +86,21 @@ An exactly constant 8×8 component block has one DC coefficient and 63 zero AC c
 
 Near-constant blocks are not treated as constant. The shortcut retains the reference path's integer quantization and rounding. See [ALGORITHMS.md](docs/ALGORITHMS.md) for formulas and coefficient-domain kernels.
 
-### Existing performance evidence
+### Current 3.2.1 comparison
 
-Historical RK3399 measurements from 2026-11-03: real 1080p Linux TTY capture JPEGs, quality 81, 4:4:4, one big core. Times include decoding, re-encoding and object setup/teardown; medians over 21 timed rounds:
+Measured on 2026-11-06 using a GitHub-hosted ARM64 runner (Neoverse-N2): **unmodified libjpeg-turbo 3.2.1** versus **3.2.1 with the current production patch**. Both use GCC 13.3, Release, NEON, quality 81, 4:4:4 and standard Huffman tables. Native JPEG-to-JPEG medians for synthetic 1080p inputs:
 
-| Frame | Standard full frame | Constant-block path | Time reduction |
+| Frame | Stock 3.2.1 | Screen | Time reduction |
 | --- | ---: | ---: | ---: |
-| Sparse terminal | 54.94 ms | 37.90 ms | 31.0% |
-| Full monochrome listing | 61.22 ms | 46.28 ms | 24.4% |
-| Full color listing | 66.06 ms | 54.31 ms | 17.8% |
+| Constant color | 15.652 ms | 11.341 ms | 27.5% |
+| Sparse glyphs | 17.653 ms | 13.770 ms | 22.0% |
+| Dense glyphs | 30.431 ms | 29.281 ms | 3.8% |
+| Gradient | 20.134 ms | 20.188 ms | -0.3% |
+| Noise | 64.565 ms | 63.465 ms | 1.7% |
 
-**These are libjpeg-turbo 2.1.5 research results, not benchmarks of this standalone 3.2.1 component.** All reference/optimized outputs matched byte for byte. Capture waits, network and browser time were excluded, and no graphical desktop workload was measured. [BENCHMARKS.md](BENCHMARKS.md) links the methods and original logs.
+**Encode time** is 42.1% lower for constant color and 36.2% lower for sparse glyphs. Each case has four warm-up rounds, 31 timed rounds and three passes; the table pools 93 samples per path. Every output pair is byte-identical. The small upstream photo is about 1.1% slower. Noise's small median improvement does not extend to P95, so it is not evidence of a general speedup.
+
+The current patch helps most when many blocks are constant; complex content has smaller gains or slight regressions. These are **cloud ARM64/synthetic-input** measurements, not RK3399 or real desktop throughput. Timing includes native decode, pixel allocation, encode and object management; returned-buffer freeing, Rust output copying, capture, networking and display are excluded. [Full methodology, parameter matrix and raw data](BENCHMARKS.md).
 
 ## Build and processing boundaries
 

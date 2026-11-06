@@ -58,8 +58,10 @@ On Linux x86_64 with Rust 1.99.1, GCC 11.4.0 and CMake 3.22.1:
   path returned an error and left the original file hash unchanged.
 - `validate_frame` passed all 48 native operations on the same 227×149 image.
 
-These are correctness and build checks, not a performance benchmark. ARM64
-and minimum-toolchain results are provided by the separate CI jobs.
+These are correctness and build checks. The Linux ARM64, macOS and Linux
+Rust 1.88 CI jobs also [passed](https://github.com/XiNian-dada/WingmanJPEG/actions/runs/42217895014).
+The separate SIMD-enabled, stock-versus-patched 3.2.1 performance comparison
+is recorded in [BENCHMARKS.md](../BENCHMARKS.md).
 
 ## Check a JPEG without capture hardware
 

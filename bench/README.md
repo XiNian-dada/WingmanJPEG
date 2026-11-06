@@ -17,7 +17,9 @@ python3 bench/run.py target/benchmark-3.2.1 --rounds 31 --repeats 3
 The output directory must not already exist. The script never installs a
 library, opens a capture device or changes a service. Results and generated
 sources stay in that directory. The [manual GitHub workflow](../.github/workflows/benchmark.yml)
-runs on a hosted ARM64 runner and saves the raw JSON as an artifact.
+runs on a hosted ARM64 runner and saves the raw JSON as an artifact. The
+2026-11-06 [results and analysis](../BENCHMARKS.md) also preserve the raw data
+in the repository so it remains available after the artifact expires.
 
 ## Inputs and measurement
 
