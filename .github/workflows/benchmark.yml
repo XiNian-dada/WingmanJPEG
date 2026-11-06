@@ -1,0 +1,26 @@
+name: Benchmark libjpeg-turbo 3.2.1
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  compare:
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Compare unmodified and production-patched libraries
+        run: python3 bench/run.py target/benchmark-3.2.1 --rounds 31 --repeats 3
+      - name: Preserve raw measurements
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: libjpeg-turbo-3.2.1-arm64
+          path: target/benchmark-3.2.1/results.json
+          if-no-files-found: error
+          retention-days: 30
