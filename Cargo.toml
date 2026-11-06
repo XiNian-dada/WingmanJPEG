@@ -1,0 +1,25 @@
+[package]
+name = "wingman-jpeg-native"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.88"
+license = "MIT AND IJG AND BSD-3-Clause AND Zlib"
+publish = false
+links = "wingman_jpeg"
+description = "Screen-oriented JPEG transcoding with exact flat-block acceleration and recoverable native errors"
+repository = "https://github.com/XiNian-dada/WingmanJPEG"
+readme = "README.md"
+keywords = ["jpeg", "compression", "screen", "libjpeg-turbo", "neon"]
+categories = ["multimedia::images", "compression"]
+
+[build-dependencies]
+cc = "1"
+cmake = "0.1.58"
+sha2 = "0.10"
+
+[dev-dependencies]
+image = { version = "0.25", default-features = false, features = ["jpeg"] }
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
